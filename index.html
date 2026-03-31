@@ -2,677 +2,250 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>💣 MINE DETECTOR | Classic Minesweeper</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mine Detector</title>
+
 <style>
-* {
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
 body {
-    font-family: 'Segoe UI', 'Poppins', 'Arial', system-ui, sans-serif;
-    text-align: center;
-    background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
-    color: #f0f3fa;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    padding: 20px;
-}
-
-.game-container {
-    background: rgba(18, 25, 45, 0.7);
-    backdrop-filter: blur(4px);
-    border-radius: 64px;
-    padding: 24px 20px 32px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.15);
-    transition: all 0.2s ease;
-}
-
-h1 {
-    font-size: 2.1rem;
-    font-weight: 700;
-    margin: 0 0 6px 0;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, #ffd966, #ffb347);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-}
-
-h1::before {
-    content: "💣";
-    font-size: 2rem;
-    background: none;
-    -webkit-background-clip: unset;
-    color: #ffaa44;
-}
-
-h1::after {
-    content: "🎖️";
-    font-size: 2rem;
-    background: none;
-    -webkit-background-clip: unset;
-    color: #ffcc77;
-}
-
-.sub {
-    font-size: 0.85rem;
-    opacity: 0.8;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-}
-
-.status-panel {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #0f1422cc;
-    backdrop-filter: blur(8px);
-    padding: 10px 24px;
-    border-radius: 60px;
-    margin: 15px 20px 20px;
-    gap: 25px;
-    flex-wrap: wrap;
-    justify-content: center;
-    border: 1px solid rgba(255,215,120,0.3);
-}
-
-.info-card {
-    background: #01061480;
-    padding: 5px 18px;
-    border-radius: 40px;
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    font-weight: bold;
-    backdrop-filter: blur(4px);
-}
-
-.info-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #bbccff;
-}
-
-.info-value {
-    font-size: 1.8rem;
-    font-weight: 800;
-    line-height: 1;
-    color: #ffdd99;
-    text-shadow: 0 0 5px #ffb34750;
-}
-
-.message-area {
-    background: #00000066;
-    padding: 8px 18px;
-    border-radius: 60px;
-    font-weight: 600;
-    font-size: 1rem;
-    min-width: 140px;
-    backdrop-filter: blur(4px);
-    color: #ffecb3;
-    letter-spacing: 0.5px;
+font-family: Arial;
+text-align: center;
+background: #111;
+color: white;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(70px, 85px));
-    gap: 10px;
-    justify-content: center;
-    margin: 20px 15px;
-    padding: 6px;
+display: grid;
+grid-template-columns: repeat(4, 80px);
+gap: 8px;
+justify-content: center;
+margin-top: 40px;
 }
 
 .cell {
-    aspect-ratio: 1 / 1;
-    background: #2a2f3f;
-    background-image: radial-gradient(circle at 35% 30%, rgba(255,255,245,0.1) 2%, transparent 2.5%);
-    background-size: 12px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: all 0.12s linear;
-    box-shadow: 0 8px 0 #0b0e16, 0 2px 10px rgba(0,0,0,0.3);
-    color: #111;
-    transform: translateY(-2px);
-}
-
-.cell:active {
-    transform: translateY(3px);
-    box-shadow: 0 3px 0 #0b0e16;
+width: 80px;
+height: 80px;
+background: #333;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 24px;
+cursor: pointer;
+border-radius: 8px;
 }
 
 .cell.revealed {
-    background: #eef3ff;
-    background-image: none;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
-    transform: translateY(0);
-    cursor: default;
-    color: #1f2a3e;
-}
-
-/* numbered colors */
-.cell.revealed[data-value="1"] { color: #2c7da0; }
-.cell.revealed[data-value="2"] { color: #2e8b57; }
-.cell.revealed[data-value="3"] { color: #c44536; }
-.cell.revealed[data-value="4"] { color: #2c3e66; }
-.cell.revealed[data-value="5"] { color: #b5651e; }
-.cell.revealed[data-value="6"] { color: #6c3483; }
-.cell.revealed[data-value="7"] { color: #b03a2e; }
-.cell.revealed[data-value="8"] { color: #616a6b; }
-
-.cell.flagged::before {
-    content: "🚩";
-    font-size: 32px;
-    line-height: 1;
-}
-
-.cell.flagged {
-    background: #2f3545;
-    font-size: 0;
-}
-
-.cell.flagged span {
-    display: none;
-}
-
-/* mine explosion effect */
-.game-over-effect .cell.revealed[data-mine="true"] {
-    background: #c72a2a;
-    animation: pulse 0.2s ease-in-out;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); background: #ff5e5e; }
-    80% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+background: #eee;
+color: black;
 }
 
 button {
-    background: linear-gradient(135deg, #2a3f5e, #1a2a3e);
-    border: none;
-    padding: 12px 28px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #f5e7c8;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: 0.1s linear;
-    margin-top: 12px;
-    box-shadow: 0 6px 0 #0b1018;
-    font-family: inherit;
-    letter-spacing: 1px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-button:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #0b1018;
-}
-
-button:hover {
-    background: linear-gradient(135deg, #3e5a7c, #253c58);
-    color: white;
-}
-
-footer {
-    font-size: 0.7rem;
-    margin-top: 20px;
-    opacity: 0.6;
-}
-
-@media (max-width: 480px) {
-    .grid {
-        gap: 8px;
-        grid-template-columns: repeat(4, minmax(65px, 75px));
-    }
-    .info-value {
-        font-size: 1.4rem;
-    }
-    .status-panel {
-        gap: 12px;
-    }
+margin-top: 20px;
+padding: 10px 20px;
+cursor: pointer;
 }
 </style>
+
 </head>
+
 <body>
-<div class="game-container">
-    <h1>MINE DETECTOR</h1>
-    <div class="sub">⚡ classic sweep | 4x4 · 3 mines</div>
 
-    <div class="status-panel">
-        <div class="info-card">
-            <span class="info-label">💣 MINES</span>
-            <span class="info-value" id="minesLeft">3</span>
-        </div>
-        <div class="info-card">
-            <span class="info-label">🚩 FLAGS</span>
-            <span class="info-value" id="flagsCount">0</span>
-        </div>
-        <div class="message-area" id="statusMsg">▶ PLAY</div>
-    </div>
-
-    <div class="grid" id="grid"></div>
-
-    <button id="restartBtn">⟳ RESTART</button>
-    <footer>◉ left-click → reveal &nbsp;&nbsp;|&nbsp;&nbsp; ◉ right-click → 🚩 flag</footer>
+<h1>Mine Detector Game</h1>
+<div>
+Score: <span id="score">0</span> |
+Moves: <span id="moves">0</span>
 </div>
 
+<div class="grid" id="grid"></div>
+
+<button onclick="startGame()">Restart</button>
+
 <script>
-    // ---------- CONFIG ----------
-    const SIZE = 4;
-    const MINE_COUNT = 3;
-    const TOTAL_CELLS = SIZE * SIZE;
-    const SAFE_CELLS = TOTAL_CELLS - MINE_COUNT;
 
-    let board = [];         // stores "M" or number (0-8)
-    let revealed = [];      // boolean
-    let flags = [];         // boolean flag state
-    let gameActive = true;
-    let firstMoveFlag = true;   // to track if first click ever (for safe start)
+const size = 4
+const mineCount = 3
 
-    // DOM elements
-    const gridContainer = document.getElementById("grid");
-    const minesLeftSpan = document.getElementById("minesLeft");
-    const flagsCountSpan = document.getElementById("flagsCount");
-    const statusMsgDiv = document.getElementById("statusMsg");
+let board = []
+let revealed = []
+let score = 0
+let moves = 0
+let gameOver = false
 
-    // helper: count currently placed flags
-    function getActiveFlagsCount() {
-        let cnt = 0;
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                if (flags[i][j]) cnt++;
-            }
-        }
-        return cnt;
-    }
+function startGame() {
 
-    // update UI counters
-    function updateCounters() {
-        const flagsUsed = getActiveFlagsCount();
-        flagsCountSpan.innerText = flagsUsed;
-        let minesLeftVal = MINE_COUNT - flagsUsed;
-        minesLeftVal = minesLeftVal < 0 ? 0 : minesLeftVal;
-        minesLeftSpan.innerText = minesLeftVal;
-    }
+board = []
+revealed = []
+score = 0
+moves = 0
+gameOver = false
 
-    // set status message
-    function setStatusMessage(msg, isError = false) {
-        statusMsgDiv.innerText = msg;
-        if (isError) {
-            statusMsgDiv.style.background = "#aa2e2e80";
-            setTimeout(() => {
-                if (gameActive && statusMsgDiv.innerText !== "💥 GAME OVER" && statusMsgDiv.innerText !== "🏆 YOU WIN!") 
-                    statusMsgDiv.style.background = "#00000066";
-                else if (!gameActive) {}
-            }, 1200);
-        } else {
-            statusMsgDiv.style.background = "#00000066";
-        }
-    }
+document.getElementById("score").innerText = score
+document.getElementById("moves").innerText = moves
 
-    // reveal entire board (for loss / debugging)
-    function revealAllBoard() {
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                revealed[i][j] = true;
-            }
-        }
-        renderBoard();
-    }
+for(let i=0;i<size;i++){
+board[i] = []
+revealed[i] = []
 
-    // game loss handler
-    function gameLoss() {
-        if (!gameActive) return;
-        gameActive = false;
-        setStatusMessage("💥 GAME OVER · press RESTART", true);
-        // reveal all mines and show everything
-        revealAllBoard();
-        // add special class for mine flash effect (css)
-        const cellsDom = document.querySelectorAll(".cell");
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                if (board[i][j] === "M") {
-                    const idx = i * SIZE + j;
-                    if (cellsDom[idx]) cellsDom[idx].setAttribute("data-mine", "true");
-                }
-            }
-        }
-        document.body.classList.add("game-over-effect");
-        setTimeout(() => document.body.classList.remove("game-over-effect"), 400);
-    }
+for(let j=0;j<size;j++){
+board[i][j] = 0
+revealed[i][j] = false
+}
+}
 
-    // win handler
-    function gameWin() {
-        if (!gameActive) return;
-        gameActive = false;
-        setStatusMessage("🏆 YOU WIN! PERFECT DETECTION 🎉");
-        // reveal all cells for satisfaction
-        revealAllBoard();
-        statusMsgDiv.style.background = "#2c5e2ecc";
-    }
+placeMines()
+calculateNumbers()
+render()
+}
 
-    // check win condition
-    function checkWin() {
-        let revealedSafe = 0;
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                if (board[i][j] !== "M" && revealed[i][j]) revealedSafe++;
-            }
-        }
-        if (revealedSafe === SAFE_CELLS) {
-            gameWin();
-            renderBoard();
-            return true;
-        }
-        return false;
-    }
+function placeMines(){
 
-    // recursive zero expansion (flood fill for empty cells)
-    function expandZeroRegion(row, col) {
-        // BFS or recursion safe for 4x4
-        for (let dx = -1; dx <= 1; dx++) {
-            for (let dy = -1; dy <= 1; dy++) {
-                const ni = row + dx;
-                const nj = col + dy;
-                if (ni >= 0 && ni < SIZE && nj >= 0 && nj < SIZE) {
-                    // if not revealed, not flagged, and game active
-                    if (!revealed[ni][nj] && !flags[ni][nj] && gameActive) {
-                        // reveal it
-                        revealed[ni][nj] = true;
-                        // if it's a number 0, recursively expand further
-                        if (board[ni][nj] === 0) {
-                            expandZeroRegion(ni, nj);
-                        }
-                    }
-                }
-            }
-        }
-    }
+let placed = 0
 
-    // core reveal logic (no first-move safety, assumes cell is safe)
-    function performReveal(row, col) {
-        if (!gameActive) return false;
-        if (revealed[row][col]) return false;
-        if (flags[row][col]) {
-            setStatusMessage("🚫 Remove flag first!", false);
-            return false;
-        }
+while(placed < mineCount){
 
-        // reveal the cell
-        revealed[row][col] = true;
+let r = Math.floor(Math.random()*size)
+let c = Math.floor(Math.random()*size)
 
-        // MINE? game over
-        if (board[row][col] === "M") {
-            gameLoss();
-            renderBoard();
-            return false;
-        }
+if(board[r][c] !== "M"){
+board[r][c] = "M"
+placed++
+}
 
-        // if cell value === 0, auto reveal adjacent (flood)
-        if (board[row][col] === 0) {
-            expandZeroRegion(row, col);
-        }
+}
 
-        renderBoard();
-        const won = checkWin();
-        if (won) renderBoard();
-        return true;
-    }
+}
 
-    // ---------- FIRST CLICK SAFETY: regenerate mines avoiding first cell ----------
-    function relocateMinesExcluding(safeRow, safeCol) {
-        // reset board, revealed, flags, keep game active true
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                board[i][j] = 0;
-                revealed[i][j] = false;
-                flags[i][j] = false;
-            }
-        }
-        gameActive = true;
-        // place mines avoiding (safeRow, safeCol)
-        let placed = 0;
-        while (placed < MINE_COUNT) {
-            const r = Math.floor(Math.random() * SIZE);
-            const c = Math.floor(Math.random() * SIZE);
-            if ((r === safeRow && c === safeCol)) continue;
-            if (board[r][c] !== "M") {
-                board[r][c] = "M";
-                placed++;
-            }
-        }
-        calculateNumbers();
-        // ensure the target cell is not a mine
-        if (board[safeRow][safeCol] === "M") {
-            // fallback: swap with any non-mine cell (safety)
-            for (let i = 0; i < SIZE && board[safeRow][safeCol] === "M"; i++) {
-                for (let j = 0; j < SIZE; j++) {
-                    if (board[i][j] !== "M" && !(i === safeRow && j === safeCol)) {
-                        board[safeRow][safeCol] = board[i][j];
-                        board[i][j] = "M";
-                        break;
-                    }
-                }
-            }
-        }
-        // recalc numbers again if changed
-        calculateNumbers();
-        renderBoard();
-    }
+function calculateNumbers(){
 
-    // numbers calculation (based on current mines)
-    function calculateNumbers() {
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                if (board[i][j] === "M") continue;
-                let cnt = 0;
-                for (let x = -1; x <= 1; x++) {
-                    for (let y = -1; y <= 1; y++) {
-                        const ni = i + x, nj = j + y;
-                        if (ni >= 0 && ni < SIZE && nj >= 0 && nj < SIZE && board[ni][nj] === "M") cnt++;
-                    }
-                }
-                board[i][j] = cnt;
-            }
-        }
-    }
+for(let i=0;i<size;i++){
+for(let j=0;j<size;j++){
 
-    // place mines randomly (initial fresh start)
-    function placeRandomMines() {
-        let placed = 0;
-        while (placed < MINE_COUNT) {
-            const r = Math.floor(Math.random() * SIZE);
-            const c = Math.floor(Math.random() * SIZE);
-            if (board[r][c] !== "M") {
-                board[r][c] = "M";
-                placed++;
-            }
-        }
-    }
+if(board[i][j] === "M") continue
 
-    // full game reset (classic)
-    function resetAndStart() {
-        // reset arrays
-        board = Array(SIZE).fill().map(() => Array(SIZE).fill(0));
-        revealed = Array(SIZE).fill().map(() => Array(SIZE).fill(false));
-        flags = Array(SIZE).fill().map(() => Array(SIZE).fill(false));
-        gameActive = true;
-        firstMoveFlag = true;   // first click will be protected
-        
-        // place mines initially randomly
-        placeRandomMines();
-        calculateNumbers();
-        
-        renderBoard();
-        setStatusMessage("▶ GAME READY");
-        updateCounters();
-        // remove any leftover data-mine styles
-        const cellsDom = document.querySelectorAll(".cell");
-        if (cellsDom) cellsDom.forEach(cell => cell.removeAttribute("data-mine"));
-    }
+let count = 0
 
-    // render dynamic grid with flags, numbers, revealed
-    function renderBoard() {
-        gridContainer.innerHTML = "";
-        for (let i = 0; i < SIZE; i++) {
-            for (let j = 0; j < SIZE; j++) {
-                const cell = document.createElement("div");
-                cell.className = "cell";
-                const isRevealed = revealed[i][j];
-                const isFlagged = flags[i][j] && !isRevealed;
-                const cellValue = board[i][j];
-                
-                if (isRevealed) {
-                    cell.classList.add("revealed");
-                    if (cellValue === "M") {
-                        cell.innerText = "💣";
-                        cell.setAttribute("data-mine", "true");
-                    } else if (cellValue === 0) {
-                        cell.innerText = "";
-                    } else {
-                        cell.innerText = cellValue;
-                        cell.setAttribute("data-value", cellValue);
-                    }
-                } 
-                else {
-                    // unrevealed style
-                    if (isFlagged) {
-                        cell.classList.add("flagged");
-                        cell.innerText = "";    // pseudo-element shows flag
-                        // extra span to keep consistent
-                        const flagIcon = document.createElement("span");
-                        flagIcon.innerText = "🚩";
-                        flagIcon.style.fontSize = "32px";
-                        flagIcon.style.display = "flex";
-                        flagIcon.style.alignItems = "center";
-                        flagIcon.style.justifyContent = "center";
-                        cell.innerHTML = "";
-                        cell.appendChild(flagIcon);
-                    } else {
-                        cell.innerText = "";
-                        cell.style.fontSize = "0";
-                    }
-                }
-                
-                // prevent default context menu on right click
-                cell.oncontextmenu = (e) => {
-                    e.preventDefault();
-                    handleFlag(i, j);
-                    return false;
-                };
-                
-                cell.onclick = (e) => {
-                    e.stopPropagation();
-                    handleReveal(i, j);
-                };
-                
-                gridContainer.appendChild(cell);
-            }
-        }
-        updateCounters();
-    }
-    
-    // Flag toggling logic
-    function handleFlag(row, col) {
-        if (!gameActive) {
-            setStatusMessage("Game over, restart to play", false);
-            return;
-        }
-        if (revealed[row][col]) {
-            setStatusMessage("Cannot flag an open cell", false);
-            return;
-        }
-        
-        const currentFlag = flags[row][col];
-        const flagsUsed = getActiveFlagsCount();
-        
-        if (!currentFlag && flagsUsed >= MINE_COUNT) {
-            setStatusMessage(`⚠️ Only ${MINE_COUNT} mines available`, false);
-            return;
-        }
-        
-        // toggle flag
-        flags[row][col] = !currentFlag;
-        renderBoard();
-        
-        // Optional: check win by flags? Standard win via reveal all safe cells, but we also allow win after final reveal
-        // check win after flag toggle (if all safe cells revealed maybe already done, but just in case)
-        checkWin();
-        updateCounters();
-        if (gameActive && checkWin()) renderBoard();
-    }
-    
-    // Main reveal handler with FIRST MOVE SAFETY
-    function handleReveal(row, col) {
-        if (!gameActive) {
-            setStatusMessage("Game finished, click RESTART", false);
-            return;
-        }
-        // already revealed
-        if (revealed[row][col]) return;
-        // flagged cannot be revealed
-        if (flags[row][col]) {
-            setStatusMessage("🚩 Remove flag before revealing", false);
-            return;
-        }
-        
-        // ----- FIRST MOVE PROTECTION -----
-        // count total revealed cells (0 if none revealed)
-        let totalRevealed = 0;
-        for (let i=0; i<SIZE; i++)
-            for (let j=0; j<SIZE; j++)
-                if (revealed[i][j]) totalRevealed++;
-        
-        // if it's the very first reveal (no cell revealed) and we hit a mine -> relocate mines
-        if (totalRevealed === 0 && board[row][col] === "M") {
-            // regenerate board without mine at (row, col)
-            relocateMinesExcluding(row, col);
-            // after relocation, board[row][col] is safe, now proceed with reveal
-            // also need to ensure we preserve flag state (all flags reset anyway)
-            // call performReveal on same cell now safe
-            if (gameActive && !revealed[row][col] && !flags[row][col]) {
-                performReveal(row, col);
-            }
-            renderBoard();
-            return;
-        }
-        
-        // normal reveal flow
-        performReveal(row, col);
-    }
-    
-    // restart game handler
-    function restartGame() {
-        resetAndStart();
-    }
-    
-    // ---- INITIAL SETUP ----
-    function init() {
-        resetAndStart();
-        document.getElementById("restartBtn").addEventListener("click", () => {
-            restartGame();
-        });
-    }
-    
-    init();
+for(let x=-1;x<=1;x++){
+for(let y=-1;y<=1;y++){
+
+let ni = i+x
+let nj = j+y
+
+if(
+ni>=0 &&
+nj>=0 &&
+ni<size &&
+nj<size &&
+board[ni][nj] === "M"
+){
+count++
+}
+
+}
+}
+
+board[i][j] = count
+
+}
+}
+
+}
+
+function render(){
+
+const grid = document.getElementById("grid")
+grid.innerHTML = ""
+
+for(let i=0;i<size;i++){
+for(let j=0;j<size;j++){
+
+const cell = document.createElement("div")
+cell.className = "cell"
+
+if(revealed[i][j]){
+cell.classList.add("revealed")
+
+if(board[i][j] === "M"){
+cell.innerText = "💣"
+cell.style.background = "#ff4d4d"
+}else if(board[i][j] !== 0){
+cell.innerText = board[i][j]
+}
+
+}
+
+cell.onclick = () => reveal(i,j)
+
+grid.appendChild(cell)
+
+}
+}
+
+}
+
+function reveal(i,j){
+
+if(revealed[i][j] || gameOver) return
+
+revealed[i][j] = true
+moves++
+
+document.getElementById("moves").innerText = moves
+
+if(board[i][j] === "M"){
+gameOver = true
+showAllMines()
+render()
+setTimeout(()=>{
+alert("Game Over 💣\nScore: " + score)
+},200)
+return
+}
+
+score += 10
+document.getElementById("score").innerText = score
+
+checkWin()
+render()
+
+}
+
+function showAllMines(){
+
+for(let i=0;i<size;i++){
+for(let j=0;j<size;j++){
+if(board[i][j] === "M"){
+revealed[i][j] = true
+}
+}
+}
+
+}
+
+function checkWin(){
+
+let safe = 0
+
+for(let i=0;i<size;i++){
+for(let j=0;j<size;j++){
+
+if(board[i][j] !== "M" && revealed[i][j]){
+safe++
+}
+
+}
+}
+
+if(safe === (size*size - mineCount)){
+gameOver = true
+setTimeout(()=>{
+alert("You Win 🎉\nScore: " + score + "\nMoves: " + moves)
+},200)
+}
+
+}
+
+startGame()
+
 </script>
+
 </body>
 </html>
