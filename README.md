@@ -1,18 +1,40 @@
-Mine Detector
-A classic Minesweeper-style puzzle game built with plain HTML, CSS, and JavaScript. Click tiles, avoid mines, and clear the board.
+# Mine Detector Game
 
-How to Play
-You have a 4x4 grid with 3 hidden mines. Reveal all safe tiles without hitting a mine to win.
-Left-click - reveal a tile
-Right-click - place or remove a flag
-The numbers tell you how many mines are in the surrounding eight tiles. Use them to decide where to click next. Flag the tiles you think contain mines.
-Hit a mine and the game ends. Clear every safe tile and you win.
+A simple Mine Detector Game built using HTML, CSS, and JavaScript where players must safely reveal cells and avoid hidden mines. The game is based on logical reasoning similar to classic grid-based AI environments.
 
-Features
-First-click safety - you never lose on your first move
-Flag counter - shows remaining mines to find
-Auto-expansion - empty tiles reveal their neighbors automatically
-Color-coded numbers for better readability
-Works on desktop and mobile
-Built With
-HTML, CSS, and vanilla JavaScript. No frameworks or external dependencies
+## How It Works
+
+* The game creates a 4×4 grid
+* 3 mines are placed randomly each game
+* Player clicks cells to reveal them
+* Each safe cell shows the number of nearby mines
+* If player clicks a mine → Game Over
+* If all safe cells are revealed → Player Wins
+
+## Game Logic
+
+* Mine → Lose immediately
+* Number → Indicates mines in surrounding cells
+* Empty cell → Safe to continue
+* Reveal all safe cells → Win
+
+## Features
+
+* Random mine placement
+* Score system
+* Move counter
+* Mine reveal on loss
+* Restart game button
+* Clean grid UI
+
+## Scoring System
+
+* +10 points for each safe cell revealed
+* Score shown live
+* Final score shown on win/loss
+
+## Technologies Used
+
+* HTML
+* CSS
+* JavaScript (Vanilla JS)
